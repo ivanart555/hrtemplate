@@ -6,6 +6,8 @@ import com.ivanart555.hrtemplate.repositories.PositionRepository;
 import com.ivanart555.hrtemplate.services.PositionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,6 +22,13 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public List<Position> findAll() throws ServiceException {
         List<Position> positions = positionRepository.findAll();
+        log.info("All Positions received successfully.");
+        return positions;
+    }
+
+    @Override
+    public Page<Position> findAll(Pageable pageable) throws ServiceException {
+        Page<Position> positions = positionRepository.findAll(pageable);
         log.info("All Positions received successfully.");
         return positions;
     }

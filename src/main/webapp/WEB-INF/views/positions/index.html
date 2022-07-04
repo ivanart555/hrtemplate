@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Positions</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+          crossorigin="anonymous">   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+    <style type="text/css">
+        .error {
+            color: #F00;
+            background-color: #FFF;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav aria-label="Navigation bar" th:replace="layouts :: navbar"></nav>
+
+<div class="container my-2">
+    <h1>Positions</h1>
+
+    <table aria-label="List of all positions" border="1" class="table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">
+                <div class="parent position-relative">
+                    <button type="button" class="btn btn-success btn-sm position-absolute top-0 end-0"
+                            data-bs-toggle="modal" data-bs-target="#addModal">Add
+                    </button>
+                </div>
+                Actions
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="position : ${positionPage.content}">
+            <td th:text="${position.id}">id</td>
+            <td th:text="${position.name}">name</td>
+            <td>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                        th:attr="data-bs-target='#modalUpdate'+${position.id}">Edit
+                </button>
+
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                        th:attr="data-bs-target='#modalDelete'+${position.id}">Delete
+                </button>
+
+                <div class="modal fade text-body" th:attr="id='modalUpdate'+${position.id}" tabindex="-1"
+                     aria-labelledby="modalUpdate" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="updateModalLabel">Edit position</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form th:method="PATCH" th:action="@{/positions/edit}"
+                                      th:object="${position}" th:attr="id=${position.id}">
+                                    <div class="mb-3">
+                                        <input type="hidden" class="form-control" id="id" name="id" th:value="*{id}">
+                                        <br>
+                                        <label for="name" class="form-label">Name:</label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                               th:value="*{name}"/>
+                                        <br>
+
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <button type="submit" class="btn btn-success">Update position</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade text-body" th:attr="id='modalDelete'+${position.id}" tabindex="-1"
+                     aria-labelledby="modalDelete" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+                                <form class="form-horizontal"
+                                      th:action="@{/positions/delete/{id}(id=${position.id})}" th:method="DELETE">
+                                    <input id="id" name="id" type="hidden" th:value="${position.id}"/>
+                                    <div class="form-group">
+                                        <div class="text-nowrap bd-highlight">
+                                            <p
+                                                    th:text="'Are you sure you want to delete position:' + ' ' + ${position.id} + ' ' + '?'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <button type="submit" class="btn btn-danger">Delete position</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">New position</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:method="POST" th:action="@{/positions}" th:object="${position}" id="">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Position name:</label>
+                            <input type="text" th:field="*{name}" class="form-control" id="name">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation" class="paging">
+        <ul class="pagination justify-content-center" th:if="${totalPages > 1}">
+            <li class="page-item" th:classappend="${!positionPage.hasPrevious()? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/positions(size=${positionPage.size}, page=${currentPage - 1})}"
+                   tabindex="-1">Previous</a>
+            </li>
+
+            <th:block th:each="number : ${pageNumbers}">
+                <li class="page-item" th:classappend="${number == currentPage? 'active' : ''}">
+                    <a class="page-link" th:href="@{/positions(size=${positionPage.size}, page=${number})}"
+                       th:text="${number}"></a>
+                </li>
+
+            </th:block>
+
+            <li class="page-item" th:classappend="${!positionPage.hasNext()? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/positions(size=${positionPage.size}, page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>

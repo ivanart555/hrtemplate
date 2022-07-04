@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "postion_id")
+    @Column(name = "position_id")
     private Integer id;
 
     @Column(name = "position_name", unique = true)
